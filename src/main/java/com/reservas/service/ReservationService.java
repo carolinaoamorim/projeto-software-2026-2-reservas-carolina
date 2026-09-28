@@ -77,12 +77,6 @@ public class ReservationService {
                 .body(PagamentoResponseDTO.class);
 
 
-        PagamentoResponseDTO response = restClient.get()
-                .uri("http://localhost:8081/api/pagamentos")
-                .retrieve()
-                .body(PagamentoResponseDTO.class);
-
-
         // Cria o pagamento
         //Payment payment = new Payment(reservation, paymentType, paymentData);
        // payment.setStatus(Payment.PaymentStatus.APPROVED);
