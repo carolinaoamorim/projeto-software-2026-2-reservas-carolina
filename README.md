@@ -37,6 +37,16 @@ spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 ```
 
+Passo 3.1 - Adicionar dependência do postgres e remover  a do H2
+
+```
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+```
+
 Passo 4 - Construir a imagem
 
 ```
@@ -46,7 +56,7 @@ docker build -t reservas .
 Passo 5 - Executar a imagem
 
 ```
-docker run -p 8081:8081 --name reservas reservas
+docker run -p 8081:8081 --name reservas --network rede reservas
 ```
 
 Passo 6 - Mudar novamente o application.properties
@@ -69,7 +79,7 @@ docker build -t reservas .
 Passo 8 - Executar a imagem novamente
 
 ```
-docker run -p 8081:8081 -e BD_HOST=postgres-aula --name reservas reservas
+docker run -p 8081:8081 -e DB_HOST=postgres-aula --network rede --name reservas reservas
 ```
 
 ## Exercício 2
