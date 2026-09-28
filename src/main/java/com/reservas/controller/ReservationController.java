@@ -63,8 +63,8 @@ public class ReservationController {
                     reservation.getId(),
                     reservation.getStatus().toString(),
                     reservation.getCpf(),
-                    reservation.getPayment().getStatus().toString(),
-                    reservation.getPayment().getCreatedAt()
+                    null,
+                    null
             );
 
             return ResponseEntity.ok(response);

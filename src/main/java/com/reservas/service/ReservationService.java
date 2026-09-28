@@ -1,5 +1,7 @@
 package com.reservas.service;
 
+import com.reservas.dto.PagamentoDto;
+import com.reservas.dto.PagamentoResponseDTO;
 import com.reservas.dto.ReservationResponse;
 import com.reservas.entity.Event;
 import com.reservas.entity.Payment;
@@ -10,7 +12,10 @@ import com.reservas.repository.ReservationRepository;
 import com.reservas.repository.TicketRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClient;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,14 +60,37 @@ public class ReservationService {
             throw new IllegalArgumentException("Reserva não está pendente");
         }
 
+        RestClient restClient = RestClient.builder().build();
+
+        PagamentoDto dto = new PagamentoDto();
+        dto.setTipo(paymentType.toString());
+        dto.setChaveOrigem("123");
+        dto.setChaveDestino(paymentData);
+        dto.setDataCompra(LocalDate.now());
+        dto.setParcelas(1);
+        dto.setValor(new BigDecimal(reservation.getEvent().getPrice()));
+
+        PagamentoResponseDTO response = restClient.post()
+                .uri("http://localhost:8081/api/pagamentos")
+                .body(dto)
+                .retrieve()
+                .body(PagamentoResponseDTO.class);
+
+
+        PagamentoResponseDTO response = restClient.get()
+                .uri("http://localhost:8081/api/pagamentos")
+                .retrieve()
+                .body(PagamentoResponseDTO.class);
+
+
         // Cria o pagamento
-        Payment payment = new Payment(reservation, paymentType, paymentData);
-        payment.setStatus(Payment.PaymentStatus.APPROVED);
-        paymentRepository.save(payment);
+        //Payment payment = new Payment(reservation, paymentType, paymentData);
+       // payment.setStatus(Payment.PaymentStatus.APPROVED);
+        //paymentRepository.save(payment);
 
         // Atualiza o status da reserva
         reservation.setStatus(Reservation.ReservationStatus.CONFIRMED);
-        reservation.setPayment(payment);
+        // reservation.setPayment(payment);
         reservationRepository.save(reservation);
 
         // Cria o ticket confirmado
